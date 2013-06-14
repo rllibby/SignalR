@@ -164,15 +164,6 @@ namespace Microsoft.AspNet.SignalR.Client.WP7.Sample
             _Alerts.Start();
         }
 
-        private void ClearKpiList()
-        {
-            Dispatcher.BeginInvoke(() =>
-            {
-                App.ViewModel.SalesItems.Clear();
-            }
-            );
-        }
-
         private void ShowProgress(bool show)
         {
             Dispatcher.BeginInvoke(() =>
@@ -256,16 +247,15 @@ namespace Microsoft.AspNet.SignalR.Client.WP7.Sample
                 App.ViewModel.SalesItems.Clear();
                 App.ViewModel.CashFlowItems.Clear();
                 App.ViewModel.ExpenseItems.Clear();
+            });
+                
+            ShowProgress(true);
 
-                ShowProgress(true);
+            GetKpiList("Sales");
+            GetKpiList("CashFlow");
+            GetKpiList("Expense");
 
-                GetKpiList("Sales");
-                GetKpiList("CashFlow");
-                GetKpiList("Expense");
-
-                ShowProgress(false);
-            }
-            );
+            ShowProgress(false);
         }
 
         private void GetKpiList(string channel)
