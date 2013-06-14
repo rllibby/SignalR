@@ -82,6 +82,7 @@ namespace AskSage
                 Dispatcher.BeginInvoke(() =>
                 {
                     App.ViewModel.Items.Add(new ItemsModel(string.Format("Response: {0}", data)));
+                    Clear.IsEnabled = true;
                     ShowProgress(false);
                 }
                 );
@@ -130,8 +131,16 @@ namespace AskSage
                     App.ViewModel.Items.Add(new ItemsModel(string.Format("Question: {0}", Request.Text)));
 
                     _Hub.Invoke("sendRequest", new object[] { _Connection.ConnectionId, this.Request.Text });
+
+                    this.Request.Text = "";
                 }
             }
+        }
+
+        private void Clear_Clicked(object sender, RoutedEventArgs e)
+        {
+            App.ViewModel.Items.Clear();
+            Clear.IsEnabled = false;
         }
     }
 
