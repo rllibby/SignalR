@@ -349,7 +349,7 @@ namespace Microsoft.AspNet.SignalR.Client.WP8.Sample
 
             OnUpdateKPI(k);
 
-            OnAlertUpdate("Sales", "Test to check the line output available for alerts.");
+            OnAlertUpdate("Sales", "Test to check the line output available for alerts which should allow for two full lines of text.");
         }
 
         private void Panorama_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -20,7 +20,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <phone:Panorama x:Name="Panorama" Title="Sage Realtime KPI Dashboard" Grid.Row="0" FontSize="20" SelectionChanged="Panorama_SelectionChanged" >
@@ -197,17 +196,12 @@
 
         </phone:Panorama>
 
-        <ProgressBar x:Name="Progress" IsIndeterminate="True" Grid.Row="1" Height="58" IsEnabled="True"/>
+        <ProgressBar x:Name="Progress" IsIndeterminate="True" Grid.Row="0" Height="58" IsEnabled="True"/>
 
-        <StackPanel x:Name="Alerts" Margin="0" Height="60" Grid.Row="2">
-            <StackPanel.Background>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#FFF8F9F9" Offset="0"/>
-                    <GradientStop Color="#FF080808" Offset="1"/>
-                </LinearGradientBrush>
-            </StackPanel.Background>
-            <TextBlock x:Name="AlertText" Text="" Foreground="White" FontSize="20" Margin="5,10,5,5" Style="{StaticResource PhoneTextNormalStyle}" 
-                    HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="None" VerticalAlignment="Bottom"/>
+        <StackPanel x:Name="Alerts" Margin="0" Height="100" Grid.Row="2" Background="Black">
+            <TextBlock x:Name="AlertText" Text="" FontSize="20" Margin="5,10,5,5" Style="{StaticResource PhoneTextNormalStyle}" Foreground="White" 
+                    HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="None" VerticalAlignment="Bottom" TextWrapping="Wrap">
+            </TextBlock>
         </StackPanel>
 
     </Grid>
