@@ -83,12 +83,16 @@ namespace AskSage
                 Dispatcher.BeginInvoke(() =>
                 {
                     App.ViewModel.Items.Add(new ItemsModel(string.Format("Response: {0}", data)));
+<<<<<<< HEAD
                     if (_ReadAloud)
                     {
                         SpeechSynthesizer synthesizer = new SpeechSynthesizer();
                         
                         synthesizer.SpeakTextAsync(data).AsTask().Wait();
                     }
+=======
+                    Clear.IsEnabled = true;
+>>>>>>> 778316aeec327ae19b0033b7b96d63c46d7d61d8
                     ShowProgress(false);
                 }
                 );
@@ -137,10 +141,13 @@ namespace AskSage
                     App.ViewModel.Items.Add(new ItemsModel(string.Format("Question: {0}", Request.Text)));
 
                     _Hub.Invoke("sendRequest", new object[] { _Connection.ConnectionId, this.Request.Text });
+
+                    this.Request.Text = "";
                 }
             }
         }
 
+<<<<<<< HEAD
         private void clear_Click(object sender, EventArgs e)
         {
             OnResponse("There are 4 items in the east warehouse.");
@@ -154,6 +161,12 @@ namespace AskSage
                 _ReadAloud = !_ReadAloud;
                 (ApplicationBar.MenuItems[1] as ApplicationBarMenuItem).Text = _ReadAloud ? "don't read aloud" : "read aloud";
             }
+=======
+        private void Clear_Clicked(object sender, RoutedEventArgs e)
+        {
+            App.ViewModel.Items.Clear();
+            Clear.IsEnabled = false;
+>>>>>>> 778316aeec327ae19b0033b7b96d63c46d7d61d8
         }
     }
 
