@@ -7,20 +7,31 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid x:Name="LayoutRoot" Background="#FFF3F2F2">
+    <Grid x:Name="LayoutRoot">
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FFFFFFFF" Offset="0.153"/>
+                <GradientStop Color="#FF080808"/>
+            </LinearGradientBrush>
+        </Grid.Background>
         <Grid.RowDefinitions>
-            <RowDefinition Height="160"/>
+            <RowDefinition Height="100"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="20,20,20,20">
-            <TextBlock x:Name="ApplicationTitle" Foreground="Black" Text="Sage 100 ERP" FontWeight="Bold" Style="{StaticResource PageHeaderTextStyle}"/>
-            <TextBlock x:Name="PageTitle" Foreground="Black" Text="realtime kpi dashboard" FontSize="40" Style="{StaticResource PageSubheaderTextStyle}"/>
+            <TextBlock x:Name="ApplicationTitle" Foreground="White" Text="Sage Realtime KPI Dashboard" FontWeight="Bold" Style="{StaticResource PageHeaderTextStyle}"/>
         </StackPanel>
 
         <StackPanel Height="40" Grid.Row="2" Background="Black">
-            <ProgressBar x:Name="Progress" Height="40" IsIndeterminate="True" IsEnabled="True"/>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <ProgressBar x:Name="Progress" Grid.Row="0" Height="40" IsIndeterminate="True" IsEnabled="True"/>
+                <TextBlock x:Name="AlertText" Grid.Row="0" FontSize="20" Foreground="White" Text="" Margin="0,10,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Grid>
         </StackPanel>
 
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="20,10,20,30">
@@ -35,19 +46,45 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock x:Name="SalesChannel" Foreground="{Binding SalesBrush}" Text="Sales Channel" Grid.Row="0" Grid.Column="0" FontSize="30" Style="{StaticResource SubtitleTextStyle}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            <ListBox x:Name="SalesList" Margin="10,0,10,0" Grid.Column="0" Grid.Row="1" ItemsSource="{Binding SalesItems}">
+            <ListBox x:Name="SalesList" Margin="10,0,10,0" Grid.Column="0" Grid.Row="1" ItemsSource="{Binding SalesItems}" DoubleTapped="SalesList_DoubleTapped">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" >
                             <Border Background="{Binding ChannelBrush}" Width="20" Margin="0,0,20,0"/>
                             <StackPanel x:Name="Kpi" Margin="0,0,0,0">
-                                <TextBlock x:Name="Type" Text="{Binding Type}" Height="40" FontSize="26" />
-                                <TextBlock x:Name="Total" Text="{Binding Total}" FontSize="20" />
-                                <TextBlock x:Name="NumberOf" Text="{Binding NumberOf}" FontSize="20" />
-                                <TextBlock x:Name="Last" Text="{Binding Last}" FontSize="20" />
-                                <TextBlock x:Name="Largest" Text="{Binding Largest}" FontSize="20" />
-                                <TextBlock x:Name="Smallest" Text="{Binding Smallest}" FontSize="20"/>
-                                <TextBlock x:Name="Average" Text="{Binding Average}" FontSize="20"/>
+
+                                <Grid Margin="2,2,2,2" >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="240"/>
+                                        <ColumnDefinition Width="100"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Text="{Binding Name}" Grid.Row="0" Grid.Column="0" FontSize="26" />
+
+                                    <TextBlock Text="Total" Grid.Row="1" Grid.Column="0" FontSize="20" />
+                                    <TextBlock Text="{Binding Total}" Grid.Row="1" Grid.Column="1" FontSize="20" HorizontalAlignment="Right" />
+
+                                    <TextBlock Text="Last" Grid.Row="2" Grid.Column="0" FontSize="20" />
+                                    <TextBlock Text="{Binding Last}" Grid.Row="2" Grid.Column="1" FontSize="20" HorizontalAlignment="Right" />
+
+                                    <TextBlock Text="Largest" Grid.Row="3" Grid.Column="0" FontSize="20" />
+                                    <TextBlock Text="{Binding Largest}" Grid.Row="3" Grid.Column="1" FontSize="20" HorizontalAlignment="Right" />
+
+                                    <TextBlock Text="Smallest" Grid.Row="4" Grid.Column="0" FontSize="20" />
+                                    <TextBlock Text="{Binding Smallest}" Grid.Row="4" Grid.Column="1" FontSize="20" HorizontalAlignment="Right" />
+
+                                    <TextBlock Text="Average" Grid.Row="5" Grid.Column="0" FontSize="20" />
+                                    <TextBlock Text="{Binding Average}" Grid.Row="5" Grid.Column="1" FontSize="20" HorizontalAlignment="Right" />
+
+                                </Grid>
                             </StackPanel>
                         </StackPanel>
                     </DataTemplate>
@@ -61,13 +98,38 @@
                         <StackPanel Orientation="Horizontal" >
                             <Border Background="{Binding ChannelBrush}" Width="20" Margin="0,0,20,0"/>
                             <StackPanel x:Name="Kpi" Margin="0,0,0,0">
-                                <TextBlock x:Name="Type" Text="{Binding Type}" Height="40" FontSize="26" />
-                                <TextBlock x:Name="Total" Text="{Binding Total}" FontSize="20" />
-                                <TextBlock x:Name="NumberOf" Text="{Binding NumberOf}" FontSize="20" />
-                                <TextBlock x:Name="Last" Text="{Binding Last}" FontSize="20" />
-                                <TextBlock x:Name="Largest" Text="{Binding Largest}" FontSize="20" />
-                                <TextBlock x:Name="Smallest" Text="{Binding Smallest}" FontSize="20"/>
-                                <TextBlock x:Name="Average" Text="{Binding Average}" FontSize="20"/>
+
+                                <Grid Margin="2,2,2,2" >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="240"/>
+                                        <ColumnDefinition Width="100"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Text="{Binding Name}" Grid.Row="0" Grid.Column="0" FontSize="26"/>
+
+                                    <TextBlock Text="Total" Grid.Row="1" Grid.Column="0" FontSize="20" />
+                                    <TextBlock Text="{Binding Total}" Grid.Row="1" Grid.Column="1" FontSize="20" HorizontalAlignment="Right" />
+
+                                    <TextBlock Text="Last" Grid.Row="2" Grid.Column="0" FontSize="20" />
+                                    <TextBlock Text="{Binding Last}" Grid.Row="2" Grid.Column="1" FontSize="20" HorizontalAlignment="Right" />
+
+                                    <TextBlock Text="Largest" Grid.Row="3" Grid.Column="0" FontSize="20" />
+                                    <TextBlock Text="{Binding Largest}" Grid.Row="3" Grid.Column="1" FontSize="20" HorizontalAlignment="Right" />
+
+                                    <TextBlock Text="Smallest" Grid.Row="4" Grid.Column="0" FontSize="20" />
+                                    <TextBlock Text="{Binding Smallest}" Grid.Row="4" Grid.Column="1" FontSize="20" HorizontalAlignment="Right" />
+
+                                    <TextBlock Text="Average" Grid.Row="5" Grid.Column="0" FontSize="20" />
+                                    <TextBlock Text="{Binding Average}" Grid.Row="5" Grid.Column="1" FontSize="20" HorizontalAlignment="Right" />
+                                </Grid>
                             </StackPanel>
                         </StackPanel>
                     </DataTemplate>
@@ -81,13 +143,37 @@
                         <StackPanel Orientation="Horizontal" >
                             <Border Background="{Binding ChannelBrush}" Width="20" Margin="0,0,20,0"/>
                             <StackPanel x:Name="Kpi" Margin="0,0,0,0">
-                                <TextBlock x:Name="Type" Text="{Binding Type}" Height="40" FontSize="26" />
-                                <TextBlock x:Name="Total" Text="{Binding Total}" FontSize="20" />
-                                <TextBlock x:Name="NumberOf" Text="{Binding NumberOf}" FontSize="20" />
-                                <TextBlock x:Name="Last" Text="{Binding Last}" FontSize="20" />
-                                <TextBlock x:Name="Largest" Text="{Binding Largest}" FontSize="20" />
-                                <TextBlock x:Name="Smallest" Text="{Binding Smallest}" FontSize="20"/>
-                                <TextBlock x:Name="Average" Text="{Binding Average}" FontSize="20"/>
+                                <Grid Margin="2,2,2,2" >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="240"/>
+                                        <ColumnDefinition Width="100"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Text="{Binding Name}" Grid.Row="0" Grid.Column="0" FontSize="26"/>
+
+                                    <TextBlock Text="Total" Grid.Row="1" Grid.Column="0" FontSize="20" />
+                                    <TextBlock Text="{Binding Total}" Grid.Row="1" Grid.Column="1" FontSize="20" HorizontalAlignment="Right" />
+
+                                    <TextBlock Text="Last" Grid.Row="2" Grid.Column="0" FontSize="20" />
+                                    <TextBlock Text="{Binding Last}" Grid.Row="2" Grid.Column="1" FontSize="20" HorizontalAlignment="Right" />
+
+                                    <TextBlock Text="Largest" Grid.Row="3" Grid.Column="0" FontSize="20" />
+                                    <TextBlock Text="{Binding Largest}" Grid.Row="3" Grid.Column="1" FontSize="20" HorizontalAlignment="Right" />
+
+                                    <TextBlock Text="Smallest" Grid.Row="4" Grid.Column="0" FontSize="20" />
+                                    <TextBlock Text="{Binding Smallest}" Grid.Row="4" Grid.Column="1" FontSize="20" HorizontalAlignment="Right" />
+
+                                    <TextBlock Text="Average" Grid.Row="5" Grid.Column="0" FontSize="20" />
+                                    <TextBlock Text="{Binding Average}" Grid.Row="5" Grid.Column="1" FontSize="20" HorizontalAlignment="Right" />
+                                </Grid>
                             </StackPanel>
                         </StackPanel>
                     </DataTemplate>

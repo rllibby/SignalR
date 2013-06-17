@@ -19,6 +19,134 @@ using System.Threading.Tasks;
 
 namespace Microsoft.AspNet.SignalR.Client.WinRT.Sample
 {
+    public class AlertWrapper
+    {
+        private List<string> _List;
+        private TextBlock _Control;
+        private int _Index = 0;
+        private int _NewAlert = (-1);
+        private bool _Running = false;
+
+        private void FadeIn()
+        {
+            if (_Running)
+            {
+                DoubleAnimation fadeIn = new DoubleAnimation();
+
+                fadeIn.From = 0.0;
+                fadeIn.To = 1;
+                fadeIn.Duration = new Duration(TimeSpan.FromSeconds(2));
+                fadeIn.BeginTime = TimeSpan.FromSeconds(2);
+
+                Storyboard sb = new Storyboard();
+
+                Storyboard.SetTarget(fadeIn, _Control);
+                Storyboard.SetTargetProperty(fadeIn, "Opacity");
+
+                sb.Children.Add(fadeIn);
+
+                _Control.Resources.Clear();
+                _Control.Resources.Add("FaderEffect", sb);
+
+                sb.Completed += this.OnFadeInCompleted;
+
+                sb.Begin();
+            }
+        }
+
+        private void OnFadeInCompleted(object sender, object e)
+        {
+            DoubleAnimation fadeOut = new DoubleAnimation();
+
+            fadeOut.From = 1;
+            fadeOut.To = 0.0;
+            fadeOut.Duration = new Duration(TimeSpan.FromSeconds(2));
+            fadeOut.BeginTime = TimeSpan.FromSeconds(2);
+
+            Storyboard sb = new Storyboard();
+
+            Storyboard.SetTarget(fadeOut, _Control);
+            Storyboard.SetTargetProperty(fadeOut, "Opacity");
+
+            sb.Children.Add(fadeOut);
+
+            _Control.Resources.Clear();
+            _Control.Resources.Add("FaderEffect", sb);
+
+            sb.Completed += OnFadeOutCompleted;
+
+            sb.Begin();
+        }
+
+        private void OnFadeOutCompleted(object sender, object e)
+        {
+            if (_NewAlert >= 0)
+            {
+                _Index = _NewAlert;
+                _NewAlert = (-1);
+            }
+            else
+            {
+                _Index++;
+            }
+
+            if (_Index >= _List.Count)
+            {
+                _Index = 0;
+
+                if (_List.Count == 0)
+                {
+                    _Index = (-1);
+                }
+            }
+
+            _Control.Text = (_Index >= 0) ? _List[_Index] : string.Empty;
+
+            if (_Running)
+            {
+                FadeIn();
+            }
+        }
+
+        public AlertWrapper(TextBlock control)
+        {
+            _Control = control;
+            _Running = false;
+            _List = new List<string>();
+            _NewAlert = (-1);
+            _Index = 0;
+        }
+
+        public void Start()
+        {
+            if (_Running == false)
+            {
+                _Running = true;
+                FadeIn();
+            }
+        }
+
+        public void Stop()
+        {
+            _Running = false;
+        }
+
+        public void AddAlert(string textAlert)
+        {
+            if (_List.Count >= 10)
+            {
+                _List.RemoveAt(0);
+            }
+
+            _List.Add(textAlert);
+
+            if (_NewAlert == (-1))
+            {
+                _NewAlert = _List.Count - 1;
+            }
+        }
+    }
+
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
@@ -30,6 +158,7 @@ namespace Microsoft.AspNet.SignalR.Client.WinRT.Sample
 
             public IEnumerable<ErpKpi> List;
             public ErpKpi Item;
+            public string Alert;
             public bool Show;
 
             public UiDispatcher(MainPage page)
@@ -53,6 +182,11 @@ namespace Microsoft.AspNet.SignalR.Client.WinRT.Sample
                         App.ViewModel.UpdateKPI(kpi);
                     }
                 }
+            }
+
+            public void OnAddAlert()
+            {
+                _Page._Alerts.AddAlert(Alert);
             }
 
             public void OnUpdateItem()
@@ -86,21 +220,32 @@ namespace Microsoft.AspNet.SignalR.Client.WinRT.Sample
                             {
                                 if (viewKpi.Type.Equals(((ErpKpiViewModel)item.DataContext).Type))
                                 {
-                                    DoubleAnimation xa = new DoubleAnimation();
                                     Storyboard sb = new Storyboard();
 
-                                    xa.Duration = new Duration(TimeSpan.FromSeconds(1.0));
-                                    xa.From = 0.5;
-                                    xa.To = 1;
+                                    DoubleAnimation animation = new DoubleAnimation()
+                                    {
+                                        Duration = new TimeSpan(0, 0, 1)
+                                    };
 
-                                    sb.Duration = new Duration(TimeSpan.FromSeconds(1.0));
-                                    sb.Children.Add(xa);
+                                    sb.Children.Add(animation);
 
-                                    Storyboard.SetTarget(sb, item);
-                                    Storyboard.SetTargetProperty(sb, "Opacity");
+                                    if (item.Projection == null)
+                                    {
+                                        item.Projection = new PlaneProjection()
+                                        {
+                                            CenterOfRotationX = 0.5
+                                        };
+                                    }
+
+                                    PlaneProjection projection = item.Projection as PlaneProjection;
+
+                                    animation.From = 0;
+                                    animation.To = 360;
+
+                                    Storyboard.SetTarget(animation, projection);
+                                    Storyboard.SetTargetProperty(animation, "RotationX");
 
                                     sb.Begin();
-
                                 }
                             }
                         }
@@ -111,10 +256,12 @@ namespace Microsoft.AspNet.SignalR.Client.WinRT.Sample
             public void OnShowDispatched()
             {
                 _Page.Progress.Visibility = Show ? Visibility.Visible : Visibility.Collapsed;
+                _Page.AlertText.Visibility = Show ? Visibility.Collapsed : Visibility.Visible;
             }
         }
 
         private HubConnection _Connection;
+        private AlertWrapper _Alerts;
         private IHubProxy _Hub;
         private bool _Connected = false;
         private bool _Loaded = false;
@@ -123,6 +270,9 @@ namespace Microsoft.AspNet.SignalR.Client.WinRT.Sample
         {
             this.InitializeComponent();
             DataContext = App.ViewModel;
+
+            _Alerts = new AlertWrapper(AlertText);
+            _Alerts.Start();
         }
  
         private async void ShowProgress(bool show)
@@ -131,6 +281,14 @@ namespace Microsoft.AspNet.SignalR.Client.WinRT.Sample
             disp.Show = show;
 
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, new DispatchedHandler(disp.OnShowDispatched));
+        }
+
+        private async void OnAlertUpdate(string channel, string data)
+        {
+            UiDispatcher disp = new UiDispatcher(this);
+            disp.Alert = data;
+
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, new DispatchedHandler(disp.OnAddAlert));
         }
 
         private async void OnUpdateKPI(ErpKpi kpi)
@@ -221,6 +379,7 @@ namespace Microsoft.AspNet.SignalR.Client.WinRT.Sample
             _Connection.Closed += () => ReportClosed();
 
             _Hub = _Connection.CreateHubProxy("erpTicker");
+            _Hub.On<string, string>("addTickerItem", (channel, data) => OnAlertUpdate(channel, data));
             _Hub.On<ErpKpi>("updateSalesKPI", data => OnUpdateKPI(data));
             _Hub.On<ErpKpi>("updateCashFlowKPI", data => OnUpdateKPI(data));
             _Hub.On<ErpKpi>("updateExpenseKPI", data => OnUpdateKPI(data));
@@ -231,6 +390,16 @@ namespace Microsoft.AspNet.SignalR.Client.WinRT.Sample
             
             _Connection.Start();
         }
-       
+
+        private void SalesList_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            ErpKpi kpi = new ErpKpi();
+            kpi.Channel = "Sales";
+            kpi.Type = "Orders";
+            kpi.Total = 1234.45M;
+
+            OnUpdateKPI(kpi);
+            OnAlertUpdate("Sales", "This is a test of some long text to display in the alert banner.");
+        }
     }
 }

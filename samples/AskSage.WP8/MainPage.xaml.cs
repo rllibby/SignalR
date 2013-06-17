@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR.Client;
 using Microsoft.AspNet.SignalR.Client.Hubs;
 using Windows.Phone.Speech.Recognition;
+using Windows.Phone.Speech.Synthesis;
 
 namespace AskSage
 {
@@ -24,7 +25,7 @@ namespace AskSage
         private HubConnection _Connection;
         private IHubProxy _Hub;
         private bool _Connected = false;
-
+        private bool _ReadAloud = true;
 
         // Constructor
         public MainPage()
@@ -82,6 +83,12 @@ namespace AskSage
                 Dispatcher.BeginInvoke(() =>
                 {
                     App.ViewModel.Items.Add(new ItemsModel(string.Format("Response: {0}", data)));
+                    if (_ReadAloud)
+                    {
+                        SpeechSynthesizer synthesizer = new SpeechSynthesizer();
+                        
+                        synthesizer.SpeakTextAsync(data).AsTask().Wait();
+                    }
                     ShowProgress(false);
                 }
                 );
@@ -131,6 +138,21 @@ namespace AskSage
 
                     _Hub.Invoke("sendRequest", new object[] { _Connection.ConnectionId, this.Request.Text });
                 }
+            }
+        }
+
+        private void clear_Click(object sender, EventArgs e)
+        {
+            OnResponse("There are 4 items in the east warehouse.");
+            App.ViewModel.Items.Clear();
+        }
+
+        private void speak_Click(object sender, EventArgs e)
+        {
+            if (ApplicationBar.MenuItems.Count > 1) 
+            {
+                _ReadAloud = !_ReadAloud;
+                (ApplicationBar.MenuItems[1] as ApplicationBarMenuItem).Text = _ReadAloud ? "don't read aloud" : "read aloud";
             }
         }
     }

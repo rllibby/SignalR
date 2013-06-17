@@ -17,18 +17,18 @@
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
         <Grid.RowDefinitions>
-            <RowDefinition Height="120"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!--TitlePanel contains the name of the application and page title-->
-        <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,28">
+        <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,30">
             <TextBlock x:Name="ApplicationTitle" Text="AskSage" Style="{StaticResource PhoneTextNormalStyle}"/>
-            <ProgressBar x:Name="Progress" IsIndeterminate="True" Height="30" IsEnabled="True" VerticalAlignment="Bottom" Margin="0,20,0,0"/>
+            <ProgressBar x:Name="Progress" IsIndeterminate="True" Height="30" IsEnabled="True" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
         </StackPanel>
 
         <!--ContentPanel - place additional content here-->
-        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="10,10,10,10">
+        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="5,5,5,5">
             <Grid.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="Black" Offset="0"/>
@@ -36,16 +36,16 @@
                 </LinearGradientBrush>
             </Grid.Background>
             <StackPanel x:Name="InputPanel">
-                <TextBlock HorizontalAlignment="Left" Margin="20,20,0,0" TextWrapping="Wrap" Text="Ask your ERP system a question." VerticalAlignment="Top"/>
-                <StackPanel Orientation="Horizontal" Margin="-6,0,0,0"  HorizontalAlignment="Right" Height="96">
-                    <TextBox x:Name="Request" IsEnabled="False" HorizontalAlignment="Left" Height="72" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="380" KeyDown="Request_KeyDown"/>
-                    <Button x:Name="Speech"  Width="73" Height="73" Margin="0,10,0,0" IsEnabled="False" Click="Speech_Click" HorizontalAlignment="Center" BorderThickness="3" VerticalAlignment="Top">
+                <TextBlock HorizontalAlignment="Left" Margin="20,20,0,0" TextWrapping="NoWrap" Text="Ask your ERP system a question." VerticalAlignment="Top"/>
+                <StackPanel Orientation="Horizontal" Margin="-6,0,0,0"  HorizontalAlignment="Right" Height="80">
+                    <TextBox x:Name="Request" IsEnabled="False" HorizontalAlignment="Left" Height="72" Margin="0,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="391" KeyDown="Request_KeyDown"/>
+                    <Button x:Name="Speech"  Width="73" Height="73" Margin="0,10,0,0" IsEnabled="False" Click="Speech_Click" HorizontalAlignment="Left" BorderThickness="2" VerticalAlignment="Top">
                         <Button.Background>
                             <ImageBrush ImageSource="/Toolkit.Content/microphone.png" Stretch="None"/>
                         </Button.Background>
                     </Button>
                 </StackPanel>
-                <ListBox x:Name="Response" Height="444" Margin="20,20,20,20" ItemsSource="{Binding Items}">
+                <ListBox x:Name="Response" Height="420" Margin="20,20,21,20" ItemsSource="{Binding Items}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel x:Name="r1" Margin="0,10,10,0" Background="{Binding ChannelBrush}">
@@ -57,5 +57,14 @@
             </StackPanel>
         </Grid>
     </Grid>
+
+    <phone:PhoneApplicationPage.ApplicationBar>
+        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
+            <shell:ApplicationBar.MenuItems>
+                <shell:ApplicationBarMenuItem x:Name="clear" Text="clear history" Click="clear_Click" />
+                <shell:ApplicationBarMenuItem x:Name="speak" Text="don't read aloud" Click="speak_Click" />
+            </shell:ApplicationBar.MenuItems>
+        </shell:ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>
 
 </phone:PhoneApplicationPage>

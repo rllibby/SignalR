@@ -16,6 +16,24 @@ namespace Microsoft.AspNet.SignalR.Client.WinRT.Sample.ViewModels
 {
     public static class Utility
     {
+        public static Color GetChannelColor(string channel)
+        {
+            if (string.Equals(channel, "Sales"))
+            {
+                return Color.FromArgb(0xff, 0x02, 0x47, 0x31);
+            }
+            else if (string.Equals(channel, "CashFlow"))
+            {
+                return Color.FromArgb(0xff, 0x69, 0x92, 0x3a);
+            }
+            else if (string.Equals(channel, "Expense"))
+            {
+                return Color.FromArgb(0xff, 0xa8, 0xb4, 0x00);
+            }
+
+            return Color.FromArgb(0xff, 0x00, 0x00, 0x00);
+        }
+
         public static Brush GetChannelBrush(string channel)
         {
             if (string.Equals(channel, "Sales"))
@@ -80,6 +98,14 @@ namespace Microsoft.AspNet.SignalR.Client.WinRT.Sample.ViewModels
             }
         }
 
+        public Color ChannelColor
+        {
+            get
+            {
+                return Utility.GetChannelColor(_Name);
+            }
+        }
+
         public Brush ChannelBrush
         {
             get
@@ -126,6 +152,14 @@ namespace Microsoft.AspNet.SignalR.Client.WinRT.Sample.ViewModels
             }
         }
 
+        public string Name
+        {
+            get
+            {
+                return string.Format("{0} ({1})", _Type, _NumberOf);
+            }
+        }
+
         public string Type
         {
             get
@@ -138,7 +172,16 @@ namespace Microsoft.AspNet.SignalR.Client.WinRT.Sample.ViewModels
                 {
                     _Type = value;
                     NotifyPropertyChanged("Type");
+                    NotifyPropertyChanged("Name");
                 }
+            }
+        }
+
+        public Color ChannelColor
+        {
+            get
+            {
+                return Utility.GetChannelColor(_Channel);
             }
         }
 
@@ -171,7 +214,7 @@ namespace Microsoft.AspNet.SignalR.Client.WinRT.Sample.ViewModels
         {
             get
             {
-                return "Total: " + _Total;
+                return _Total;
             }
             set
             {
@@ -187,7 +230,7 @@ namespace Microsoft.AspNet.SignalR.Client.WinRT.Sample.ViewModels
         {
             get
             {
-                return "Number Of: " + _NumberOf;
+                return _NumberOf;
             }
             set
             {
@@ -195,6 +238,7 @@ namespace Microsoft.AspNet.SignalR.Client.WinRT.Sample.ViewModels
                 {
                     _NumberOf = value;
                     NotifyPropertyChanged("NumberOf");
+                    NotifyPropertyChanged("Name");
                 }
             }
         }
@@ -203,7 +247,7 @@ namespace Microsoft.AspNet.SignalR.Client.WinRT.Sample.ViewModels
         {
             get
             {
-                return "Largest: " + _Largest;
+                return _Largest;
             }
             set
             {
@@ -219,7 +263,7 @@ namespace Microsoft.AspNet.SignalR.Client.WinRT.Sample.ViewModels
         {
             get
             {
-                return "Smallest: " + _Smallest;
+                return _Smallest;
             }
             set
             {
@@ -235,7 +279,7 @@ namespace Microsoft.AspNet.SignalR.Client.WinRT.Sample.ViewModels
         {
             get
             {
-                return "Last: " + _Last;
+                return _Last;
             }
             set
             {
@@ -251,7 +295,7 @@ namespace Microsoft.AspNet.SignalR.Client.WinRT.Sample.ViewModels
         {
             get
             {
-                return "Average: " + _Average;
+                return _Average;
             }
             set
             {
