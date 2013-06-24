@@ -59,6 +59,7 @@
     <Reference Include="System.Threading.Tasks.WP71, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\System.Threading.Tasks.3.0.1\lib\sl4-wp71\System.Threading.Tasks.WP71.dll</HintPath>
+      <Aliases>global</Aliases>
     </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="system" />
