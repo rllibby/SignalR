@@ -253,11 +253,16 @@ namespace Microsoft.AspNet.SignalR.Client.WP8.Sample
                 
             ShowProgress(true);
 
-            GetKpiList("Sales");
-            GetKpiList("CashFlow");
-            GetKpiList("Expense");
-
-            ShowProgress(false);
+            try
+            {
+                GetKpiList("Sales");
+                GetKpiList("CashFlow");
+                GetKpiList("Expense");
+            }
+            finally
+            {
+                ShowProgress(false);
+            }
         }
 
         private void GetKpiList(string channel)
@@ -315,6 +320,7 @@ namespace Microsoft.AspNet.SignalR.Client.WP8.Sample
             _Connection = new HubConnection("http://swmsignalrsite.azurewebsites.net/");
 
             _Connection.StateChanged += change => ReportChange(change);
+            _Connection.Closed += _Connection_Closed;
             _Connection.Error += ex => { ReportError(ex); };
 
             _Hub = _Connection.CreateHubProxy("erpTicker");
@@ -327,6 +333,11 @@ namespace Microsoft.AspNet.SignalR.Client.WP8.Sample
             _Hub.On<ErpKpi>("addExpenseKPI", data => OnUpdateKPI(data));
             _Hub.On("reset", () => OnReset());
 
+            _Connection.Start();
+        }
+
+        void _Connection_Closed()
+        {
             _Connection.Start();
         }
 

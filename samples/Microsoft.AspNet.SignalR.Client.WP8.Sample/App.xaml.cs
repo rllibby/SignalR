@@ -68,14 +68,13 @@ namespace Microsoft.AspNet.SignalR.Client.WP8.Sample
                 // Enable non-production analysis visualization mode, 
                 // which shows areas of a page that are handed off to GPU with a colored overlay.
                 //Application.Current.Host.Settings.EnableCacheVisualization = true;
-
-                // Disable the application idle detection by setting the UserIdleDetectionMode property of the
-                // application's PhoneApplicationService object to Disabled.
-                // Caution:- Use this under debug mode only. Application that disables user idle detection will continue to run
-                // and consume battery power when the user is not using the phone.
-                PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
             }
 
+            // Disable the application idle detection by setting the UserIdleDetectionMode property of the
+            // application's PhoneApplicationService object to Disabled.
+            // Caution:- Use this under debug mode only. Application that disables user idle detection will continue to run
+            // and consume battery power when the user is not using the phone.
+            PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
         }
 
         // Code to execute when the application is launching (eg, from Start)
@@ -119,6 +118,14 @@ namespace Microsoft.AspNet.SignalR.Client.WP8.Sample
             {
                 // An unhandled exception has occurred; break into the debugger
                 System.Diagnostics.Debugger.Break();
+            }
+            else
+            {
+                if (e.ExceptionObject != null)
+                {
+                    MessageBox.Show(e.ExceptionObject.Message);
+                }
+                e.Handled = true;
             }
         }
 
