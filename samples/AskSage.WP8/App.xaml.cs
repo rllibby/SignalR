@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Windows;
@@ -12,17 +15,25 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
-using System.ComponentModel;
-using System.Collections.ObjectModel;
+using Microsoft.Phone.Tasks;
+using System.Threading.Tasks;
+using Microsoft.AspNet.SignalR.Client;
+using Microsoft.AspNet.SignalR.Client.Hubs;
+using Windows.Phone.Speech.Recognition;
+using Windows.Phone.Speech.Synthesis;
+using System.Windows.Resources;
+using System.Windows.Threading;
 
 namespace AskSage
 {
-    public class ItemsModel
+    public class ItemsModel : INotifyPropertyChanged
     {
+        private bool _User;
         private string _Text;
 
-        public ItemsModel(string text)
+        public ItemsModel(bool user, string text)
         {
+            _User = user;
             _Text = text;
         }
 
@@ -31,6 +42,33 @@ namespace AskSage
             get
             {
                 return _Text;
+            }
+        }
+
+        public Brush TextColor
+        {
+            get
+            {
+                return _User ? new SolidColorBrush(Colors.Black) : new SolidColorBrush(Color.FromArgb(255, 52, 178, 51));
+            }
+        }
+
+        public HorizontalAlignment Alignment
+        {
+            get
+            {
+                return _User ? HorizontalAlignment.Right : HorizontalAlignment.Left;
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (null != handler)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
     }
@@ -73,6 +111,8 @@ namespace AskSage
     {
         private static MainViewModel viewModel = null;
 
+        public static List<string> GrammerList = new List<string>();
+
         /// <summary>
         /// A static ViewModel used by the views to bind against.
         /// </summary>
@@ -83,7 +123,9 @@ namespace AskSage
             {
                 // Delay creation of the view model until necessary
                 if (viewModel == null)
+                {
                     viewModel = new MainViewModel();
+                }
 
                 return viewModel;
             }
@@ -100,6 +142,8 @@ namespace AskSage
         /// </summary>
         public App()
         {
+            string line;
+
             // Global handler for uncaught exceptions. 
             UnhandledException += Application_UnhandledException;
 
@@ -109,26 +153,33 @@ namespace AskSage
             // Phone-specific initialization
             InitializePhoneApplication();
 
-            // Show graphics profiling information while debugging.
-            if (System.Diagnostics.Debugger.IsAttached)
+            // Get resource info
+            StreamResourceInfo streamResData = App.GetResourceStream(new Uri("/AskSage.WP8;component/Assets/Grammer.txt", UriKind.Relative));
+
+            // Load into stream
+            using (StreamReader streamData = new StreamReader(streamResData.Stream))
             {
-                // Display the current frame rate counters.
-                Application.Current.Host.Settings.EnableFrameRateCounter = true;
-
-                // Show the areas of the app that are being redrawn in each frame.
-                //Application.Current.Host.Settings.EnableRedrawRegions = true;
-
-                // Enable non-production analysis visualization mode, 
-                // which shows areas of a page that are handed off to GPU with a colored overlay.
-                //Application.Current.Host.Settings.EnableCacheVisualization = true;
-
-                // Disable the application idle detection by setting the UserIdleDetectionMode property of the
-                // application's PhoneApplicationService object to Disabled.
-                // Caution:- Use this under debug mode only. Application that disables user idle detection will continue to run
-                // and consume battery power when the user is not using the phone.
-                PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
+                // Read the lines
+                using (StringReader sr = new StringReader(streamData.ReadToEnd()))
+                {
+                    // While not eof
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        // Check line
+                        if (!string.IsNullOrEmpty(line))
+                        {
+                            // Add line to grammer list
+                            GrammerList.Add(line);
+                        }
+                    }
+                }
             }
 
+            // Disable the application idle detection by setting the UserIdleDetectionMode property of the
+            // application's PhoneApplicationService object to Disabled.
+            // Caution:- Use this under debug mode only. Application that disables user idle detection will continue to run
+            // and consume battery power when the user is not using the phone.
+            PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
         }
 
         // Code to execute when the application is launching (eg, from Start)
@@ -173,6 +224,10 @@ namespace AskSage
                 // An unhandled exception has occurred; break into the debugger
                 System.Diagnostics.Debugger.Break();
             }
+
+            MessageBox.Show(e.ExceptionObject.Message, "Unhandled", MessageBoxButton.OK);
+
+            e.Handled = true;
         }
 
         #region Phone application initialization

@@ -15,54 +15,48 @@
     shell:SystemTray.IsVisible="True">
 
     <!--LayoutRoot is the root grid where all page content is placed-->
-    <Grid x:Name="LayoutRoot" Background="Transparent">
+    <Grid x:Name="LayoutRoot" Background="White">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="50"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
-        <!--TitlePanel contains the name of the application and page title-->
-        <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,30">
-            <TextBlock x:Name="ApplicationTitle" Text="AskSage" Style="{StaticResource PhoneTextNormalStyle}"/>
-            <ProgressBar x:Name="Progress" IsIndeterminate="True" Height="30" IsEnabled="True" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
+        <StackPanel Grid.Row="0" Background="Black">
+            <TextBlock x:Name="Title" Text="Ask Sage" Foreground="White" VerticalAlignment="Stretch"/>
+            <ProgressBar x:Name="progress" Height="20" IsEnabled="True" IsIndeterminate="true" />
         </StackPanel>
-
-        <!--ContentPanel - place additional content here-->
-        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="5,5,5,5">
-            <Grid.Background>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="Black" Offset="0"/>
-                    <GradientStop Color="#FF557643" Offset="1"/>
-                </LinearGradientBrush>
-            </Grid.Background>
-            <StackPanel x:Name="InputPanel">
-                <TextBlock HorizontalAlignment="Left" Margin="20,20,0,0" TextWrapping="NoWrap" Text="Ask your ERP system a question." VerticalAlignment="Top"/>
-                <StackPanel Orientation="Horizontal" Margin="-6,0,0,0"  HorizontalAlignment="Right" Height="80">
-                    <TextBox x:Name="Request" IsEnabled="False" HorizontalAlignment="Left" Height="72" Margin="0,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="391" KeyDown="Request_KeyDown"/>
-                    <Button x:Name="Speech"  Width="73" Height="73" Margin="0,10,0,0" IsEnabled="False" Click="Speech_Click" HorizontalAlignment="Left" BorderThickness="2" VerticalAlignment="Top">
-                        <Button.Background>
-                            <ImageBrush ImageSource="/Toolkit.Content/microphone.png" Stretch="None"/>
-                        </Button.Background>
-                    </Button>
-                </StackPanel>
-                <ListBox x:Name="Response" Height="420" Margin="20,20,21,20" ItemsSource="{Binding Items}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel x:Name="r1" Margin="0,10,10,0" Background="{Binding ChannelBrush}">
-                                <TextBlock x:Name="ResponseText" Text="{Binding Text}" Foreground="White" FontSize="22" Style="{StaticResource PhoneTextNormalStyle}" TextWrapping="Wrap"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </StackPanel>
-        </Grid>
+        <ListBox x:Name="conversation" Grid.Row="1" Background="White" ItemsSource="{Binding Items}" >
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="5,5,5,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border CornerRadius="4" BorderThickness="1" HorizontalAlignment="{Binding Alignment}" BorderBrush="Black">
+                            <TextBlock x:Name="userinput" Margin="5,5,5,5" Text="{Binding Text}" Foreground="{Binding TextColor}" MaxWidth="400" Grid.Column="0" HorizontalAlignment="{Binding Alignment}" TextWrapping="Wrap" VerticalAlignment="Stretch"/>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <TextBox x:Name="request" Grid.Row="2" Background="White" IsEnabled="False" VerticalAlignment="Bottom" KeyDown="Request_KeyDown" BorderBrush="Black" />
     </Grid>
 
     <phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
+            <shell:ApplicationBar.Buttons>
+                <shell:ApplicationBarIconButton x:Name="ask" IsEnabled="false" Text="ask" Click="ask_Click" IconUri="/Toolkit.Content/ApplicationBar.Check.png" />
+                <shell:ApplicationBarIconButton x:Name="speak" IsEnabled="false" Text="speak" Click="speak_Click" IconUri="/Toolkit.Content/microphone.png" />
+            </shell:ApplicationBar.Buttons>
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem x:Name="clear" Text="clear history" Click="clear_Click" />
-                <shell:ApplicationBarMenuItem x:Name="speak" Text="don't read aloud" Click="speak_Click" />
+                <shell:ApplicationBarMenuItem x:Name="speech" Text="don't read aloud" Click="speech_Click" />
+                <shell:ApplicationBarMenuItem x:Name="demo" Text="demo off" Click="demo_Click" />
             </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>
