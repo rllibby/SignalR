@@ -31,7 +31,7 @@ namespace AskSage
         private bool _Welcome = false;
         private bool _Waiting = false;
         private bool _Speech = true;
-        private bool _Demo = false;
+        private bool _Demo = true;
 
         /* Constructor for page */
         public MainPage()
@@ -88,15 +88,23 @@ namespace AskSage
 
                     // Make sure its scrolled into view
                     conversation.ScrollIntoView(item);
-
-                    // Should it be read aloud?
-                    if (!user && _Speech)
-                    {
-                        // Read it
-                        _Synthesizer.SpeakTextAsync(text).AsTask().Wait();
-                    }
                 }
             );
+
+            // Should it be read aloud?
+            if (!user && _Speech)
+            {
+                try
+                {
+                    _Synthesizer.CancelAll();
+                }
+                catch (Exception)
+                {
+                    // Eat it
+                }
+                // Read it
+                _Synthesizer.SpeakTextAsync(text);
+            }
         }
 
         /* Handle the connection state change */
@@ -236,6 +244,11 @@ namespace AskSage
                 // Change the text based on current state
                 (ApplicationBar.MenuItems[2] as ApplicationBarMenuItem).Text = _Demo ? "demo on" : "demo off";
             }
+        }
+
+        private void conversation_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            conversation.SelectedIndex = (-1);
         }
     }
 }

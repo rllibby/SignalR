@@ -31,6 +31,30 @@ namespace AskSage
         private bool _User;
         private string _Text;
 
+        public float Lerp(float start, float end, float amount)
+        {
+            float difference = end - start;
+            float adjusted = difference * amount;
+            return start + adjusted;
+        }
+
+        public Color Lerp(Color colour, Color to, float amount)
+        {
+            // start colours as lerp-able floats
+            float sr = colour.R, sg = colour.G, sb = colour.B;
+
+            // end colours as lerp-able floats
+            float er = to.R, eg = to.G, eb = to.B;
+
+            // lerp the colours to get the difference
+            byte r = (byte)Lerp(sr, er, amount),
+                 g = (byte)Lerp(sg, eg, amount),
+                 b = (byte)Lerp(sb, eb, amount);
+
+            // return the new colour
+            return Color.FromArgb(255, r, g, b);
+        }
+
         public ItemsModel(bool user, string text)
         {
             _User = user;
@@ -45,11 +69,13 @@ namespace AskSage
             }
         }
 
-        public Brush TextColor
+        public Brush BackColor
         {
             get
             {
-                return _User ? new SolidColorBrush(Colors.Black) : new SolidColorBrush(Color.FromArgb(255, 52, 178, 51));
+                Color c = (Color)Application.Current.Resources["PhoneAccentColor"];
+
+                return _User ? new SolidColorBrush(c) : new SolidColorBrush(Lerp(c, Colors.Black, 0.25f));
             }
         }
 
