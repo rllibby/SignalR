@@ -38,8 +38,11 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Border CornerRadius="4" BorderThickness="1" HorizontalAlignment="{Binding Alignment}" Background="{Binding BackColor}">
-                            <TextBlock x:Name="userinput" Margin="5,5,5,5" Text="{Binding Text}" MaxWidth="400" Grid.Column="0" HorizontalAlignment="{Binding Alignment}" TextWrapping="Wrap" VerticalAlignment="Stretch" FontSize="20"/>
+                        <Border CornerRadius="8" BorderThickness="1" HorizontalAlignment="{Binding Alignment}" Background="{Binding BackColor}">
+                            <StackPanel Grid.Column="0" Width="400" HorizontalAlignment="{Binding Alignment}" >
+                                <TextBlock x:Name="userinput" Margin="5,5,5,5" Text="{Binding Text}" MaxWidth="400" TextWrapping="Wrap" VerticalAlignment="Stretch" FontSize="20"/>
+                                <TextBlock x:Name="inputtime" Margin="5,5,5,5" Text="{Binding InputTime}" Opacity="0.7" TextWrapping="NoWrap" HorizontalAlignment="Right" VerticalAlignment="Stretch" FontSize="16"/>
+                            </StackPanel>
                         </Border>
                     </Grid>
                 </DataTemplate>

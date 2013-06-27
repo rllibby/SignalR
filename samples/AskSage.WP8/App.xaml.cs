@@ -30,6 +30,7 @@ namespace AskSage
     {
         private bool _User;
         private string _Text;
+        private string _InputTime;
 
         public float Lerp(float start, float end, float amount)
         {
@@ -59,6 +60,15 @@ namespace AskSage
         {
             _User = user;
             _Text = text;
+            _InputTime = DateTime.Now.ToString("ddd") + " " + DateTime.Now.ToString("t").ToLower();
+        }
+
+        public string InputTime
+        {
+            get
+            {
+                return _InputTime;
+            }
         }
 
         public string Text
