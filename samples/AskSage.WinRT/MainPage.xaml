@@ -1,0 +1,65 @@
+﻿<Page
+    x:Class="AskSage.WinRT.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AskSage.WinRT"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="White">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0" Margin="10,10,10,10"  Background="WhiteSmoke">
+            <TextBlock TextWrapping="NoWrap" Margin="20,40,20,20" Text="Ask Sage" Foreground="Black" Style="{StaticResource PageHeaderTextStyle}" FontSize="72" HorizontalAlignment="Left" VerticalAlignment="Stretch"/>
+            <Grid Height="80">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="request" TextWrapping="NoWrap" Grid.Column="0" Margin="20,20,10,10" Text="" FontSize="24" BorderBrush="{StaticResource ToggleSwitchCurtainBackgroundThemeBrush}" KeyDown="request_KeyDown" />
+            </Grid>
+        </StackPanel>
+
+        <ProgressBar x:Name="progress" Grid.Column="1" Height="20" IsEnabled="true" IsIndeterminate="true" Canvas.ZIndex="10" />
+
+        <ListBox x:Name="conversation" Grid.Column="1" Background="White" ItemsSource="{Binding Items}" SelectionChanged="conversation_SelectionChanged" >
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="5,5,5,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border CornerRadius="8" BorderThickness="1" HorizontalAlignment="{Binding Alignment}" Background="{Binding BackColor}">
+                            <StackPanel Grid.Column="0" Width="500" HorizontalAlignment="{Binding Alignment}" >
+                                <TextBlock x:Name="userinput" Margin="5,5,5,5" Text="{Binding Text}" Foreground="White" MaxWidth="500" TextWrapping="Wrap" VerticalAlignment="Stretch" FontSize="20"/>
+                                <TextBlock x:Name="inputtime" Margin="5,5,5,5" Text="{Binding InputTime}" Foreground="White" Opacity="0.7" TextWrapping="NoWrap" HorizontalAlignment="Right" VerticalAlignment="Stretch" FontSize="16"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        
+    </Grid>
+
+    <Page.BottomAppBar>
+        <AppBar x:Name="bottomAppBar" Padding="10,0,10,0" Background="{StaticResource ToggleSwitchCurtainPressedBackgroundThemeBrush}" >
+            <Grid>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                    <Button x:Name="ask" Style="{StaticResource SendAppBarButtonStyle}" AutomationProperties.Name="ask" Click="ask_Click"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button x:Name="clear" Style="{StaticResource DiscardAppBarButtonStyle}" AutomationProperties.Name="clear" Click="clear_Click"/>
+                </StackPanel>
+            </Grid>
+        </AppBar>
+    </Page.BottomAppBar>
+
+</Page>
