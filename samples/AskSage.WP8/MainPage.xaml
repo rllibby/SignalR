@@ -7,12 +7,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"    
+    xmlns:local="clr-namespace:ControlTiltEffect"
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait" Orientation="Portrait"
-    shell:SystemTray.IsVisible="True">
+    shell:SystemTray.IsVisible="True"
+    local:TiltEffect.IsTiltEnabled="True"
+    >
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot">
@@ -22,10 +25,10 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
-            <TextBlock x:Name="Title" Text="Ask Sage" Margin="10,10,10,10" Foreground="White" VerticalAlignment="Stretch" FontSize="36" FontWeight="Bold"/>
+            <TextBlock x:Name="appTitle" Text="Sage 100 Remote Assistant" Margin="10,10,10,10" Foreground="White" VerticalAlignment="Stretch" FontSize="28" FontWeight="Bold"/>
             <ProgressBar x:Name="progress" Height="20" Margin="10,10,10,10" IsEnabled="True" IsIndeterminate="true" />
         </StackPanel>
-        <ListBox x:Name="conversation" Grid.Row="1" ItemsSource="{Binding Items}" SelectionChanged="conversation_SelectionChanged" >
+        <ListBox x:Name="conversation" Grid.Row="1" ItemsSource="{Binding Items}" SelectionChanged="conversation_SelectionChanged">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -34,13 +37,14 @@
             </ListBox.ItemContainerStyle>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid Margin="5,5,5,5">
+                    <Grid Margin="5,5,5,5" DoubleTap="Grid_DoubleTap">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Border CornerRadius="8" BorderThickness="1" HorizontalAlignment="{Binding Alignment}" Background="{Binding BackColor}">
                             <StackPanel Grid.Column="0" Width="400" HorizontalAlignment="{Binding Alignment}" >
                                 <TextBlock x:Name="userinput" Margin="5,5,5,5" Text="{Binding Text}" MaxWidth="400" TextWrapping="Wrap" VerticalAlignment="Stretch" FontSize="20"/>
+                                <TextBlock x:Name="action" Margin="5,5,5,0" Text="{Binding ActionText}" Visibility="{Binding ActionVisible}" HorizontalAlignment="Right" Opacity="0.7" FontSize="16"/>
                                 <TextBlock x:Name="inputtime" Margin="5,5,5,5" Text="{Binding InputTime}" Opacity="0.7" TextWrapping="NoWrap" HorizontalAlignment="Right" VerticalAlignment="Stretch" FontSize="16"/>
                             </StackPanel>
                         </Border>

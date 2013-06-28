@@ -5,6 +5,7 @@ using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Text;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -15,11 +16,26 @@ using Microsoft.Phone.Tasks;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR.Client;
 using Microsoft.AspNet.SignalR.Client.Hubs;
+using Windows.Phone.Speech;
 using Windows.Phone.Speech.Recognition;
 using Windows.Phone.Speech.Synthesis;
 
 namespace AskSage
 {
+    public class ActionTag
+    {
+        public bool Parsed { get; set; }
+        public string Text { get; set; }
+        public string Action { get; set; }
+
+        public ActionTag()
+        {
+            Parsed = false;
+            Text = string.Empty;
+            Action = string.Empty;
+        }
+    }
+
     public partial class MainPage : PhoneApplicationPage
     {
         private SpeechRecognizerUI _Recognizer;
@@ -27,6 +43,7 @@ namespace AskSage
         private SpeechSynthesizer _Synthesizer;
         private HubConnection _Connection;
         private IHubProxy _Hub;
+        private int _Selected = (-1);
         private bool _Connected = false;
         private bool _Welcome = false;
         private bool _Waiting = false;
@@ -74,37 +91,84 @@ namespace AskSage
             );
         }
 
+        private ActionTag ParseTag(string text, string tag)
+        {
+            ActionTag result = new ActionTag();
+            
+            int len = tag.Length + 2;
+            int start, end;
+
+            start = text.ToLower().IndexOf(string.Format("<{0}>", tag.ToLower()));
+
+            if (start >= 0)
+            {
+                end = text.ToLower().IndexOf(string.Format("</{0}>", tag.ToLower()));
+                if (end > start)
+                {
+                    result.Action = text.Substring(start + len, (end - start) - len);
+                    result.Text = text.Remove(start, (end - start) + (len + 1));
+                    result.Parsed = true;
+                }
+            }
+
+            return result;
+        }
+
         /* Add text to the conversation thread */
         private void AddConversationText(bool user, string text)
         {
+            ItemsModel item = null;
+            ActionTag tag;
+            string readText = string.Empty;
+
+            tag = ParseTag(text, "phone");
+
+            if (tag.Parsed)
+            {
+                item = new ItemsModel(user, tag.Text, ActionType.Call, tag.Action);
+            }
+            else
+            {
+                tag = ParseTag(text, "address");
+                if (tag.Parsed)
+                {
+                    item = new ItemsModel(user, tag.Text, ActionType.Map, tag.Action);
+                }
+            }
+
+            if (item == null)
+            {
+                // Create new item model
+                item = new ItemsModel(user, text, ActionType.None, string.Empty);
+            }
+
+            readText = item.Text;
+
             // Ensure this happens on the UI thread
             Dispatcher.BeginInvoke(() =>
                 {
-                    // Create new item model
-                    ItemsModel item = new ItemsModel(user, text);
-
                     // Add to the view model
                     App.ViewModel.Items.Add(item);
 
                     // Make sure its scrolled into view
                     conversation.ScrollIntoView(item);
+
+                    // Should it be read aloud?
+                    if (!user && _Speech)
+                    {
+                        try
+                        {
+                            // Start the speech read back
+                            _Synthesizer.SpeakTextAsync(readText);
+                        }
+                        catch (Exception)
+                        {
+                            // Eat it
+                        }
+                    }
                 }
             );
 
-            // Should it be read aloud?
-            if (!user && _Speech)
-            {
-                try
-                {
-                    _Synthesizer.CancelAll();
-                }
-                catch (Exception)
-                {
-                    // Eat it
-                }
-                // Read it
-                _Synthesizer.SpeakTextAsync(text);
-            }
         }
 
         /* Handle the connection state change */
@@ -180,6 +244,9 @@ namespace AskSage
         {
             // Clear the items
             App.ViewModel.Items.Clear();
+
+            // Clear selected
+            _Selected = (-1);
         }
 
         /* Get speech input form the user */
@@ -230,6 +297,20 @@ namespace AskSage
                 // Change the text based on current state
                 (ApplicationBar.MenuItems[1] as ApplicationBarMenuItem).Text = _Speech ? "don't read aloud" : "read aloud";
             }
+
+            // If not speech
+            if (!_Speech)
+            {
+                try
+                {
+                    // Cancel any speech in progress
+                    _Synthesizer.CancelAll();
+                }
+                catch
+                {
+                    // Eat it
+                }
+            }
         }
 
         /* Toggle the demo mode */
@@ -246,9 +327,48 @@ namespace AskSage
             }
         }
 
+        /* Don't allow selection */
         private void conversation_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // Save selection
+            if (conversation.SelectedIndex >= 0)
+            {
+                _Selected = conversation.SelectedIndex;
+            }
+
+            // Clear selected item
             conversation.SelectedIndex = (-1);
+        }
+
+        /* Handle action based on item */
+        private void Grid_DoubleTap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+            // Check selected item
+            if ((_Selected >= 0) && (_Selected < App.ViewModel.Items.Count))
+            {
+                // Get the item
+                ItemsModel item = App.ViewModel.Items[_Selected];
+                // Check the action type
+                if (item.Type != ActionType.None)
+                {
+                    // Check for call
+                    if (item.Type == ActionType.Call)
+                    {
+                        // Phone call
+                        PhoneCallTask callTask = new PhoneCallTask();
+                        callTask.PhoneNumber = item.Action;
+                        callTask.Show();
+                    }
+                    else if (item.Type == ActionType.Map)
+                    {
+                        // Map the address
+                        MapsTask mapTask = new MapsTask();
+                        mapTask.ZoomLevel = 10;
+                        mapTask.SearchTerm = item.Action;
+                        mapTask.Show();
+                    }
+                }
+            }
         }
     }
 }
