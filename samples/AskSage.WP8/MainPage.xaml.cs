@@ -121,18 +121,20 @@ namespace AskSage
             ActionTag tag;
             string readText = string.Empty;
 
-            tag = ParseTag(text, "phone");
-
-            if (tag.Parsed)
+            if (user == false)
             {
-                item = new ItemsModel(user, tag.Text, ActionType.Call, tag.Action);
-            }
-            else
-            {
-                tag = ParseTag(text, "address");
+                tag = ParseTag(text, "phone");
                 if (tag.Parsed)
                 {
-                    item = new ItemsModel(user, tag.Text, ActionType.Map, tag.Action);
+                    item = new ItemsModel(user, tag.Text, ActionType.Call, tag.Action);
+                }
+                else
+                {
+                    tag = ParseTag(text, "address");
+                    if (tag.Parsed)
+                    {
+                        item = new ItemsModel(user, tag.Text, ActionType.Map, tag.Action);
+                    }
                 }
             }
 
