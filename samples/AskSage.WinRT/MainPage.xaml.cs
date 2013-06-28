@@ -26,6 +26,20 @@ using System.Threading.Tasks;
 
 namespace AskSage.WinRT
 {
+    public class ActionTag
+    {
+        public bool Parsed { get; set; }
+        public string Text { get; set; }
+        public string Action { get; set; }
+
+        public ActionTag()
+        {
+            Parsed = false;
+            Text = string.Empty;
+            Action = string.Empty;
+        }
+    }
+
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
@@ -49,6 +63,29 @@ namespace AskSage.WinRT
                 _Page = page;
             }
 
+            private ActionTag ParseTag(string text, string tag)
+            {
+                ActionTag result = new ActionTag();
+
+                int len = tag.Length + 2;
+                int start, end;
+
+                start = text.ToLower().IndexOf(string.Format("<{0}>", tag.ToLower()));
+
+                if (start >= 0)
+                {
+                    end = text.ToLower().IndexOf(string.Format("</{0}>", tag.ToLower()));
+                    if (end > start)
+                    {
+                        result.Action = text.Substring(start + len, (end - start) - len);
+                        result.Text = text.Remove(start, (end - start) + (len + 1));
+                        result.Parsed = true;
+                    }
+                }
+
+                return result;
+            }
+
             public void UpdateState()
             {
                 // Show or hide the progress bar
@@ -60,8 +97,31 @@ namespace AskSage.WinRT
 
             public void AddConversationText()
             {
-                // Create new item model
-                ItemsModel item = new ItemsModel(_User, _Text);
+                ItemsModel item = null;
+                ActionTag tag;
+
+                if (_User == false)
+                {
+                    tag = ParseTag(_Text, "phone");
+                    if (tag.Parsed)
+                    {
+                        item = new ItemsModel(_User, tag.Text, ActionType.Call, tag.Action);
+                    }
+                    else
+                    {
+                        tag = ParseTag(_Text, "address");
+                        if (tag.Parsed)
+                        {
+                            item = new ItemsModel(_User, tag.Text, ActionType.Map, tag.Action);
+                        }
+                    }
+                }
+
+                if (item == null)
+                {
+                    // Create new item model
+                    item = new ItemsModel(_User, _Text, ActionType.None, string.Empty);
+                }
 
                 // Add to the view model
                 App.ViewModel.Items.Add(item);
@@ -74,6 +134,7 @@ namespace AskSage.WinRT
 
         private HubConnection _Connection;
         private IHubProxy _Hub;
+        private int _Selected = (-1);
         private bool _Connected = false;
         private bool _Welcome = false;
         private bool _Waiting = false;
@@ -194,7 +255,37 @@ namespace AskSage.WinRT
 
         private void conversation_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // Save selection
+            if (conversation.SelectedIndex >= 0)
+            {
+                _Selected = conversation.SelectedIndex;
+            }
+
+            // Clear selected item
             conversation.SelectedIndex = (-1);
+        }
+
+        private void Grid_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            // Check selected item
+            if ((_Selected >= 0) && (_Selected < App.ViewModel.Items.Count))
+            {
+                // Get the item
+                ItemsModel item = App.ViewModel.Items[_Selected];
+                // Check the action type
+                if (item.Type != ActionType.None)
+                {
+                    // Check for call
+                    if (item.Type == ActionType.Call)
+                    {
+                        // Phone call
+                    }
+                    else if (item.Type == ActionType.Map)
+                    {
+                        // Map the address
+                    }
+                }
+            }
         }
     }
 }

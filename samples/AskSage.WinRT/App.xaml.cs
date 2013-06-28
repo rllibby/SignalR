@@ -25,11 +25,20 @@ using System.Threading.Tasks;
 
 namespace AskSage.WinRT
 {
+    public enum ActionType
+    {
+        None,
+        Call,
+        Map
+    }
+
     public class ItemsModel : INotifyPropertyChanged
     {
+        private ActionType _Type;
         private bool _User;
         private string _Text;
         private string _InputTime;
+        private string _Action;
 
         public float Lerp(float start, float end, float amount)
         {
@@ -55,11 +64,55 @@ namespace AskSage.WinRT
             return Color.FromArgb(255, r, g, b);
         }
 
-        public ItemsModel(bool user, string text)
+        public ItemsModel(bool user, string text, ActionType type, string action)
         {
+            _Type = type;
+            _Action = action;
             _User = user;
             _Text = text;
             _InputTime = DateTime.Now.ToString("ddd") + " " + DateTime.Now.ToString("t").ToLower();
+        }
+
+        public Visibility ActionVisible
+        {
+            get
+            {
+                return Visibility.Collapsed;
+                //return (_Type != ActionType.None) ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        public ActionType Type
+        {
+            get
+            {
+                return _Type;
+            }
+        }
+
+        public string Action
+        {
+            get
+            {
+                return _Action;
+            }
+        }
+
+        public string ActionText
+        {
+            get
+            {
+                switch (_Type)
+                {
+                    case ActionType.Call:
+                        return "Double tap to call";
+
+                    case ActionType.Map:
+                        return "Double tap to map";
+                }
+
+                return string.Empty;
+            }
         }
 
         public string InputTime

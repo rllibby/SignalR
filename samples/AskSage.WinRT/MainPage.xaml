@@ -13,7 +13,9 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0" Margin="10,10,10,10"  Background="WhiteSmoke">
-            <TextBlock TextWrapping="NoWrap" Margin="20,40,20,20" Text="Ask Sage" Foreground="Black" Style="{StaticResource PageHeaderTextStyle}" FontSize="72" HorizontalAlignment="Left" VerticalAlignment="Stretch"/>
+            <TextBlock TextWrapping="NoWrap" Margin="20,40,0,20" Text="Sage 100" Foreground="Black" Style="{StaticResource PageHeaderTextStyle}" FontSize="72" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="43" Width="560"/>
+            <TextBlock TextWrapping="NoWrap" Margin="20,10,0,20" Text="Remote Assistant" Foreground="Black" Style="{StaticResource PageHeaderTextStyle}" FontSize="72" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="43" Width="560"/>
+
             <Grid Height="80">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -32,7 +34,7 @@
             </ListBox.ItemContainerStyle>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid Margin="5,5,5,5">
+                    <Grid Margin="5,5,5,5" DoubleTapped="Grid_DoubleTapped">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
@@ -46,7 +48,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        
+
     </Grid>
 
     <Page.BottomAppBar>

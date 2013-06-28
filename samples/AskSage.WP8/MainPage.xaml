@@ -25,7 +25,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
-            <TextBlock x:Name="appTitle" Text="Sage 100 Remote Assistant" Margin="10,10,10,10" Foreground="White" VerticalAlignment="Stretch" FontSize="28" FontWeight="Bold"/>
+            <TextBlock x:Name="appTitle" Text="Sage 100 Remote Assistant" Margin="10,10,10,10" Foreground="{StaticResource PhoneForegroundBrush}" VerticalAlignment="Stretch" FontSize="28" FontWeight="Bold"/>
             <ProgressBar x:Name="progress" Height="20" Margin="10,10,10,10" IsEnabled="True" IsIndeterminate="true" />
         </StackPanel>
         <ListBox x:Name="conversation" Grid.Row="1" ItemsSource="{Binding Items}" SelectionChanged="conversation_SelectionChanged">
