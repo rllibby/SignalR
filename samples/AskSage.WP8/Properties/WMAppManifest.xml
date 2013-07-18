@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2012/deployment" AppPlatformVersion="8.0">
   <DefaultLanguage xmlns="" code="en-US" />
-  <App xmlns="" ProductID="{a6bd0f6a-d560-46af-9a60-37897a788b5a}" Title="AskSage.WP8" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal" Author="AskSage.WP8 author" Description="Sample description" Publisher="AskSage.WP8" PublisherID="{c2c7788e-27e9-415f-ba42-caee9e276517}">
+  <App xmlns="" ProductID="{a6bd0f6a-d560-46af-9a60-37897a788b5a}" Title="Sage Voice Initiative" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal" Author="AskSage.WP8 author" Description="Sample description" Publisher="AskSage.WP8" PublisherID="{c2c7788e-27e9-415f-ba42-caee9e276517}">
     <IconPath IsRelative="true" IsResource="false">Assets\ApplicationIcon.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_NETWORKING" />
@@ -27,7 +27,7 @@
           <SmallImageURI IsRelative="true" IsResource="false">Assets\Tiles\FlipCycleTileSmall.png</SmallImageURI>
           <Count>0</Count>
           <BackgroundImageURI IsRelative="true" IsResource="false">Assets\Tiles\FlipCycleTileMedium.png</BackgroundImageURI>
-          <Title>AskSage.WP8</Title>
+          <Title>Sage Voice Initiative</Title>
           <BackContent>
           </BackContent>
           <BackBackgroundImageURI>
