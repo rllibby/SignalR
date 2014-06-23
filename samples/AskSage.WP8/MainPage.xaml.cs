@@ -19,6 +19,8 @@ using Microsoft.AspNet.SignalR.Client.Hubs;
 using Windows.Phone.Speech;
 using Windows.Phone.Speech.Recognition;
 using Windows.Phone.Speech.Synthesis;
+using Windows.Phone.Speech.VoiceCommands;
+using System.Windows.Navigation;
 
 namespace AskSage
 {
@@ -43,6 +45,7 @@ namespace AskSage
         private SpeechSynthesizer _Synthesizer;
         private HubConnection _Connection;
         private IHubProxy _Hub;
+        private string _preSeed = String.Empty;
         private int _Selected = (-1);
         private bool _Connected = false;
         private bool _Welcome = false;
@@ -68,6 +71,31 @@ namespace AskSage
 
             // Create speech synthesizer
             _Synthesizer = new SpeechSynthesizer();
+
+            // Create signalr connection
+            _Connection = new HubConnection("http://sagevoice.azurewebsites.net/");
+            _Connection.StateChanged += change => ReportChange(change);
+
+            // Create hub proxy
+            _Hub = _Connection.CreateHubProxy("erpTicker");
+            _Hub.On<string>("addResponse", data => OnResponse(data));
+        }
+
+        /// <summary>
+        /// Installs the voice command definition file for Ask Sage.
+        /// </summary>
+        private async void InstallVoiceCommands()
+        {
+            var uri = new Uri("ms-appx:///sagevcd.xml", UriKind.Absolute);
+
+            try
+            {
+                await VoiceCommandService.InstallCommandSetsFromFileAsync(uri);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
 
         /* Update the UI state based on connection and question status */
@@ -80,6 +108,12 @@ namespace AskSage
                     foreach (ApplicationBarIconButton button in ApplicationBar.Buttons)
                     {
                         button.IsEnabled = (_Connected && !_Waiting);
+                    }
+
+                    if (_Connected && !String.IsNullOrEmpty(_preSeed))
+                    {
+                        _Hub.Invoke("sendRequest", new object[] { _Connection.ConnectionId, _preSeed });
+                        _preSeed = String.Empty;
                     }
 
                     // Show or hide the progress bar
@@ -207,25 +241,57 @@ namespace AskSage
             UpdateState();
         }
 
+        /// <summary>
+        /// Handles the voice command name
+        /// </summary>
+        /// <param name="voiceCommandName"></param>
+        private void HandleVoiceCommand(string voiceCommandName)
+        {
+            MessageBox.Show(NavigationContext.ToString());
+        }
+
         /* Navigation to the page */
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
         {
-            // Base
-            base.OnNavigatedTo(e);
-
-            // Update the UI state
-            UpdateState();
-
-            // Create connection
-            _Connection = new HubConnection("http://swmsignalrsite.azurewebsites.net/");
-            _Connection.StateChanged += change => ReportChange(change);
-
-            // Create hub proxy
-            _Hub = _Connection.CreateHubProxy("erpTicker");
-            _Hub.On<string>("addResponse", data => OnResponse(data));
-
             // Start the connection
             _Connection.Start();
+
+            if (e.NavigationMode == NavigationMode.New)
+            {
+                var voiceCommandName = String.Empty;
+
+                if (NavigationContext.QueryString.TryGetValue("voiceCommandName", out voiceCommandName))
+                {
+                    _Welcome = true;
+
+                    if (NavigationContext.QueryString.TryGetValue("reco", out voiceCommandName))
+                    {
+                        if (!string.IsNullOrEmpty(voiceCommandName))
+                        {
+                            _preSeed = voiceCommandName.TrimStart(new[] { '.', ',', ' ' });
+                            
+                            // Add the text
+                            AddConversationText(true, _preSeed);
+
+                            if (_Connected)
+                            {
+                                _Hub.Invoke("sendRequest", new object[] { _Connection.ConnectionId, _preSeed });
+                                _preSeed = String.Empty;
+                            }
+                        }
+                        // Set focus to the list box
+                        conversation.Focus();
+                    }
+                }
+                else
+                {
+                    Task.Run(() => InstallVoiceCommands());
+                }
+            }
+   
+            UpdateState();
+
+            base.OnNavigatedTo(e);
         }
 
         /* Handle enter key the same as clicking the ask button */

@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<VoiceCommands xmlns="http://schemas.microsoft.com/voicecommands/1.1">
+  <CommandSet xml:lang="en-US">
+    <CommandPrefix>Sage</CommandPrefix>
+    <Example> give me the balance for XYZ</Example>
+
+    <Command Name="AskDemo">
+      <Example>stock check universal 5</Example>
+      <ListenFor>open the pod bay doors Hal</ListenFor>
+      <ListenFor>[give] [me] [the] balance for American in Milwaukee</ListenFor>
+      <ListenFor>stock check universal 5</ListenFor>
+      <ListenFor>[give] [me] the address for American in Milwaukee</ListenFor>
+      <ListenFor>phone number for American in Milwaukee</ListenFor>
+      <ListenFor>[give] [me] [the]  address for American in Anaheim</ListenFor>
+      <ListenFor>phone number for american in milwaukee</ListenFor>
+      <ListenFor>phone number for American Business Futures</ListenFor>
+      <ListenFor>phone number for orange window doors</ListenFor>
+      <ListenFor>[give] [me] [the] address for American Business Futures</ListenFor>
+      <Feedback> Asking Sage... </Feedback>
+      <Navigate Target="/MainPage.xaml"/>
+    </Command>
+
+    <Command Name="Ask">
+      <Example>phone number for American Business Futures</Example>
+      <ListenFor>{SageQuestion}</ListenFor>
+      <Feedback> Asking Sage... </Feedback>
+      <Navigate Target="/MainPage.xaml"/>
+    </Command>
+    
+    <PhraseTopic Label="SageQuestion" Scenario="Search">
+      <Subject>Sage</Subject>
+    </PhraseTopic>
+
+
+  </CommandSet>
+</VoiceCommands>
+
+<!-- Example -->
+<!--
+
+    The preceding example demonstrates a hypothetical game called 'Contoso ROD3O!' which defines two
+    Commands that a user can say to either start a new game or replay one of three levels in the game.  
+    To initiate the PlayGame command, a user can say "Contoso Rodeo play  a new game" or "Contoso Rodeo
+    play new game". Either phrase will start a new game. To initiate the second Command, a user can say
+    "Contoso Rodeo replay level one", "Contoso Rodeo replay level two", or "Contoso Rodeo replay level 
+    three".
+    The second Command demonstrates how to use a PhraseList with a Command. PhraseLists can be updated 
+    dynamically by the application (e.g., if a user unlocks a new level or game or feature, you might 
+    want to allow the user to give commands for newfeatures after voice commands are already registered.)
+    The third Command demonstrates how the {*} sequence can parallel another command to recognize speech
+    that is not defined in the CommandSet.
+
+  Note:
+
+      [and] Indicates that "and" is optional. Making connecting words like this optional
+            can help both "Contoso Rodeo, play new game" and "open Contoso Rodeo and play
+            a new game" feel natural to speak.
+                 
+      {number} Defined separately from the Command, mapping to "one" or "two" or "three".
+
+-->
