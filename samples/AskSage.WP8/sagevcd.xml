@@ -6,23 +6,21 @@
     <Example> give me the balance for XYZ</Example>
 
     <Command Name="AskDemo">
-      <Example>stock check universal 5</Example>
+      <Example>stock check delta pot filler</Example>
       <ListenFor>open the pod bay doors Hal</ListenFor>
-      <ListenFor>[give] [me] [the] balance for American in Milwaukee</ListenFor>
-      <ListenFor>stock check universal 5</ListenFor>
-      <ListenFor>[give] [me] the address for American in Milwaukee</ListenFor>
-      <ListenFor>phone number for American in Milwaukee</ListenFor>
-      <ListenFor>[give] [me] [the]  address for American in Anaheim</ListenFor>
-      <ListenFor>phone number for american in milwaukee</ListenFor>
-      <ListenFor>phone number for American Business Futures</ListenFor>
-      <ListenFor>phone number for orange window doors</ListenFor>
-      <ListenFor>[give] [me] [the] address for American Business Futures</ListenFor>
+      <ListenFor>[give] [me] [the] balance for Beach House Homes</ListenFor>
+      <ListenFor>stock check pot filler delta</ListenFor>
+      <ListenFor>[give] [me] [the] address for Beach House Homes</ListenFor>
+      <ListenFor>[give] [me] [the]  address for Coastal in Oceanside</ListenFor>
+      <ListenFor>phone number for Beach House Homes</ListenFor>
+      <ListenFor>phone number for Coastal in Oceanside</ListenFor>
+      <ListenFor>stock check arbor faucet Moen</ListenFor>
       <Feedback> Asking Sage... </Feedback>
       <Navigate Target="/MainPage.xaml"/>
     </Command>
 
     <Command Name="Ask">
-      <Example>phone number for American Business Futures</Example>
+      <Example>phone number for Beach House Homes</Example>
       <ListenFor>{SageQuestion}</ListenFor>
       <Feedback> Asking Sage... </Feedback>
       <Navigate Target="/MainPage.xaml"/>
