@@ -21,6 +21,7 @@ using Windows.Phone.Speech.Recognition;
 using Windows.Phone.Speech.Synthesis;
 using Windows.Phone.Speech.VoiceCommands;
 using System.Windows.Navigation;
+using ShakeGestures;
 
 namespace AskSage
 {
@@ -65,6 +66,11 @@ namespace AskSage
             // Create speech recognizer 
             _Recognizer = new SpeechRecognizerUI();
 
+            // Bind up shake gesture
+            ShakeGesturesHelper.Instance.ShakeGesture += new EventHandler<ShakeGestureEventArgs>(Instance_ShakeGesture);
+            ShakeGesturesHelper.Instance.MinimumRequiredMovesForShake = 4;
+            ShakeGesturesHelper.Instance.Active = true;
+
             // Create demo recognizer and set grammer
             _DemoRecognizer = new SpeechRecognizerUI();
             _DemoRecognizer.Recognizer.Grammars.AddGrammarFromList("Demo", App.GrammerList);
@@ -79,6 +85,20 @@ namespace AskSage
             // Create hub proxy
             _Hub = _Connection.CreateHubProxy("erpTicker");
             _Hub.On<string>("addResponse", data => OnResponse(data));
+        }
+
+        // Set the data context of the TextBlock to the answer.
+        void Instance_ShakeGesture(object sender, ShakeGestureEventArgs e)
+        {
+            try
+            {
+                // Cancel any speech in progress
+                _Synthesizer.CancelAll();
+            }
+            catch
+            {
+                // Eat it
+            }
         }
 
         /// <summary>

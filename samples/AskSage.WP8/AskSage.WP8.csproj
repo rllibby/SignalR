@@ -99,9 +99,11 @@
     <PlatformTarget />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AccelerometerHelper.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ApplicationSettingHelper.cs" />
     <Compile Include="LocalizedStrings.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -112,6 +114,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AppResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ShakeGestureEventArgs.cs" />
+    <Compile Include="ShakeGesturesHelper.cs" />
+    <Compile Include="ShakeType.cs" />
+    <Compile Include="Simple3DVector.cs" />
+    <Compile Include="Simulation.cs" />
     <Compile Include="TiltEffect.cs" />
   </ItemGroup>
   <ItemGroup>
