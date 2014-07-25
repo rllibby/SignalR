@@ -372,7 +372,7 @@ namespace Microsoft.AspNet.SignalR.Client.WinRT.Sample
         {
             base.OnNavigatedTo(e);
 
-            _Connection = new HubConnection("http://swmsignalrsite.azurewebsites.net/");
+            _Connection = new HubConnection("http://sagevoice.azurewebsites.net/");
 
             _Connection.StateChanged += change => ReportChange(change);
             _Connection.Error += ex => { ReportError(ex); };
