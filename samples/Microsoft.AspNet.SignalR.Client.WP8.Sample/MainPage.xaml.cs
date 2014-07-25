@@ -317,7 +317,7 @@ namespace Microsoft.AspNet.SignalR.Client.WP8.Sample
         {
             base.OnNavigatedTo(e);
 
-            _Connection = new HubConnection("http://swmsignalrsite.azurewebsites.net/");
+            _Connection = new HubConnection("http://sagevoice.azurewebsites.net/");
 
             _Connection.StateChanged += change => ReportChange(change);
             _Connection.Closed += _Connection_Closed;
